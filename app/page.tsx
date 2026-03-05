@@ -5,16 +5,20 @@ import ContactForm from '@/components/ContactForm'
 import { Phone, Award, Star, MapPin, Home, Key, Calculator, TrendingUp } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
-
-export const revalidate = 60
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
 
 export default async function HomePage() {
-  // Fetch featured listings
-  const featuredListings = await prisma.listing.findMany({
-    where: { featured: true },
-    take: 4,
-    orderBy: { createdAt: 'desc' },
-  })
+  let featuredListings: any[] = []
+  try {
+    featuredListings = await prisma.listing.findMany({
+      where: { featured: true },
+      take: 4,
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    // Database not available
+  }
 
   return (
     <div>
