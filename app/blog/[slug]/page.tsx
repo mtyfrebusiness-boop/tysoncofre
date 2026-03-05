@@ -10,9 +10,14 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = await prisma.blogPost.findUnique({
-    where: { slug },
-  })
+  let post = null
+  try {
+    post = await prisma.blogPost.findUnique({
+      where: { slug },
+    })
+  } catch (error) {
+    // Database not set up yet
+  }
 
   if (!post) {
     return { title: 'Artigo Não Encontrado' }
@@ -26,9 +31,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = await prisma.blogPost.findUnique({
-    where: { slug },
-  })
+  let post = null
+  try {
+    post = await prisma.blogPost.findUnique({
+      where: { slug },
+    })
+  } catch (error) {
+    // Database not set up yet
+  }
 
   if (!post || !post.published) {
     notFound()

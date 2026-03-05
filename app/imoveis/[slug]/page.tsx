@@ -12,9 +12,14 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const listing = await prisma.listing.findUnique({
-    where: { slug },
-  })
+  let listing = null
+  try {
+    listing = await prisma.listing.findUnique({
+      where: { slug },
+    })
+  } catch (error) {
+    // Database not set up
+  }
 
   if (!listing) {
     return { title: 'Imóvel Não Encontrado' }
@@ -28,9 +33,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ListingDetailPage({ params }: Props) {
   const { slug } = await params
-  const listing = await prisma.listing.findUnique({
-    where: { slug },
-  })
+  let listing = null
+  try {
+    listing = await prisma.listing.findUnique({
+      where: { slug },
+    })
+  } catch (error) {
+    // Database not set up
+  }
 
   if (!listing) {
     notFound()

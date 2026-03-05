@@ -12,9 +12,15 @@ export const metadata: Metadata = {
 export const revalidate = 60
 
 export default async function ImoveisPage() {
-  const listings = await prisma.listing.findMany({
-    orderBy: { createdAt: 'desc' },
-  })
+  let listings: any[] = []
+  try {
+    listings = await prisma.listing.findMany({
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    // Database not set up yet
+    console.log('Database not available')
+  }
 
   return (
     <div className="py-12">
