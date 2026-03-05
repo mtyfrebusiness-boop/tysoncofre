@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Blog Imobiliário | Tyson Cofre RE/MAX',
   description: 'Artigos e notícias sobre o mercado imobiliário em Portugal. Dicas para compradores, vendedores e investidores.',

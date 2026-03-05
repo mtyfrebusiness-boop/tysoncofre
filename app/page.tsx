@@ -4,6 +4,8 @@ import ListingCard from '@/components/ListingCard'
 import ContactForm from '@/components/ContactForm'
 import { Phone, Award, Star, MapPin, Home, Key, Calculator, TrendingUp } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const revalidate = 60
 
 export default async function HomePage() {

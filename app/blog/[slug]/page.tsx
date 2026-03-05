@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: Promise<{ slug: string }>
 }

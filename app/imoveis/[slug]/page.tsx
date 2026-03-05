@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db'
 import ContactForm from '@/components/ContactForm'
 import { Bed, Bath, Maximize, MapPin, Zap, Check } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: Promise<{ slug: string }>
 }
