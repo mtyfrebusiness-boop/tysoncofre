@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  titleEn         String?
+  titleEs         String?
+  description     String
+  descriptionEn   String?
+  descriptionEs   String?
+  price           Float
+  priceType       String   @default("sale")
+  status          String   @default("available")
+  type            String
+  bedrooms        Int
+  bathrooms       Int
+  area            Float
+  location        String
+  district        String?
+  parish          String?
+  lat             Float?
+  lng             Float?
+  energyClass     String?
+  features        String
+  images          String
+  featured        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  titleEn     String?
+  titleEs     String?
+  content     String
+  contentEn   String?
+  contentEs   String?
+  excerpt     String
+  coverImage  String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  source    String?
+  listingId String?
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  name     String
+  role     String @default("admin")
+}
