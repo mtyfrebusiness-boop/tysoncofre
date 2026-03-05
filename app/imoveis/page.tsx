@@ -3,13 +3,13 @@ import { prisma } from '@/lib/db'
 import ListingCard from '@/components/ListingCard'
 
 export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Imóveis à Venda e Arrendamento | Tyson Cofre RE/MAX',
   description: 'Encontre apartamentos, moradias e outros imóveis à venda e arrendamento em Almada, Lisboa e região. Contacte Tyson Cofre, consultor RE/MAX.',
 }
-
-export const revalidate = 60
 
 export default async function ImoveisPage() {
   let listings: any[] = []
