@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
-export default function AdminLoginPage() {
+export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -13,26 +12,19 @@ export default function AdminLoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
-    
     setLoading(true)
     setError('')
 
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-      if (result?.error) {
-        setError('Email ou password incorretos')
-      } else {
-        router.push('/admin')
-      }
-    } catch (err) {
-      setError('Erro ao fazer login')
-    } finally {
+    if (res.ok) {
+      router.push('/admin')
+    } else {
+      setError('Email ou password incorretos')
       setLoading(false)
     }
   }
