@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import ContactForm from '@/components/ContactForm'
+import ImageGallery from '@/components/ImageGallery'
 import { Bed, Bath, Maximize, MapPin, Zap, Check } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -71,27 +72,7 @@ export default async function ListingDetailPage({ params }: Props) {
     <div className="py-12">
       <div className="container mx-auto px-4">
         {/* Image Gallery */}
-        <div className="mb-8">
-          <div className="relative h-[400px] lg:h-[500px] rounded-lg overflow-hidden">
-            <img
-              src={images[0] || '/images/placeholder.jpg'}
-              alt={listing.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {images.length > 1 && (
-            <div className="flex gap-2 mt-4 overflow-x-auto">
-              {images.map((img: string, index: number) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`${listing.title} - Imagem ${index + 1}`}
-                  className="w-24 h-24 object-cover rounded cursor-pointer hover:opacity-80"
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <ImageGallery images={images} title={listing.title} />
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
