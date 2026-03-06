@@ -1,6 +1,3 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Home, Building, FileText, Users, LogOut } from 'lucide-react'
 
@@ -9,12 +6,6 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions)
-
-  if (!session) {
-    redirect('/admin/login')
-  }
-
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Admin Sidebar */}
