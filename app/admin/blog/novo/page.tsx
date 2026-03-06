@@ -125,9 +125,8 @@ export default function NovoBlogPostPage() {
             Imagem de Capa
           </label>
           <ImageUpload
-            value={formData.coverImage ? [formData.coverImage] : []}
-            onChange={(urls) => setFormData({ ...formData, coverImage: urls[0] || '' })}
-            maxImages={1}
+            value={formData.coverImage}
+            onChange={(url) => setFormData({ ...formData, coverImage: url })}
           />
         </div>
 
