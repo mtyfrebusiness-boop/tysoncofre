@@ -13,8 +13,79 @@ export async function GET(request: NextRequest) {
   // }
 
   try {
-    // Create tables
-    await prisma.$executeRaw`SELECT 1`
+    // Create tables if they don't exist
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "User" (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        name TEXT NOT NULL,
+        role TEXT DEFAULT 'admin'
+      );
+    `;
+    
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "Listing" (
+        id TEXT PRIMARY KEY,
+        slug TEXT UNIQUE NOT NULL,
+        title TEXT NOT NULL,
+        "titleEn" TEXT,
+        "titleEs" TEXT,
+        description TEXT NOT NULL,
+        "descriptionEn" TEXT,
+        "descriptionEs" TEXT,
+        price REAL NOT NULL,
+        "priceType" TEXT DEFAULT 'sale',
+        status TEXT DEFAULT 'available',
+        type TEXT NOT NULL,
+        bedrooms INTEGER NOT NULL,
+        bathrooms INTEGER NOT NULL,
+        area REAL NOT NULL,
+        location TEXT NOT NULL,
+        district TEXT,
+        parish TEXT,
+        lat REAL,
+        lng REAL,
+        "energyClass" TEXT,
+        features TEXT NOT NULL,
+        images TEXT NOT NULL,
+        featured BOOLEAN DEFAULT false,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `;
+    
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "BlogPost" (
+        id TEXT PRIMARY KEY,
+        slug TEXT UNIQUE NOT NULL,
+        title TEXT NOT NULL,
+        "titleEn" TEXT,
+        "titleEs" TEXT,
+        content TEXT NOT NULL,
+        "contentEn" TEXT,
+        "contentEs" TEXT,
+        excerpt TEXT NOT NULL,
+        "coverImage" TEXT,
+        published BOOLEAN DEFAULT false,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `;
+    
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "Lead" (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT,
+        message TEXT NOT NULL,
+        source TEXT,
+        "listingId" TEXT,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        read BOOLEAN DEFAULT false
+      );
+    `;
     
     // Create admin user if not exists
     const existingUser = await prisma.user.findUnique({
