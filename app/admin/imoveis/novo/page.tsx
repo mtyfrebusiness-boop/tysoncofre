@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ImageUpload from '@/components/ImageUpload'
 
 export default function NovoImovelPage() {
   const router = useRouter()
@@ -382,8 +383,13 @@ export default function NovoImovelPage() {
         {/* Images */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Imagens (URLs separados por vírgula)
+            Imagem Principal
           </label>
+          <ImageUpload
+            value={formData.images}
+            onChange={(url) => setFormData({ ...formData, images: url })}
+          />
+          <p className="mt-1 text-xs text-gray-500">Ou use URLs separados por vírgula:</p>
           <textarea
             value={formData.images}
             onChange={(e) => setFormData({ ...formData, images: e.target.value })}
