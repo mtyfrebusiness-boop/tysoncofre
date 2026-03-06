@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ImageUpload from '@/components/ImageUpload'
 
 export default function NovoBlogPostPage() {
   const router = useRouter()
@@ -121,14 +122,12 @@ export default function NovoBlogPostPage() {
         {/* Cover Image */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            URL da Imagem de Capa
+            Imagem de Capa
           </label>
-          <input
-            type="url"
-            value={formData.coverImage}
-            onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
-            placeholder="https://exemplo.com/imagem.jpg"
+          <ImageUpload
+            value={formData.coverImage ? [formData.coverImage] : []}
+            onChange={(urls) => setFormData({ ...formData, coverImage: urls[0] || '' })}
+            maxImages={1}
           />
         </div>
 

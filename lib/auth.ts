@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt'
   },
   pages: {
-    signIn: '/admin/login'
+    signIn: '/admin/login',
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -60,5 +60,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     }
-  }
+  },
+  // Use dynamic URL to handle both custom domain and Vercel URL
+  useSecureCookies: true,
 }
