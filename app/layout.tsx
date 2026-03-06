@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
+import { Suspense } from "react";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -37,12 +38,14 @@ export default function RootLayout({
   return (
     <html lang="pt">
       <body className={`${playfair.variable} ${lato.variable} font-sans antialiased`}>
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
-        <CookieBanner />
+          <Navbar />
+          <Suspense fallback={<div className="h-16"></div>}>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </Suspense>
+          <Footer />
+          <CookieBanner />
       </body>
     </html>
   );

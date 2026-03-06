@@ -13,20 +13,27 @@ export default function AdminLoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
+    
     setLoading(true)
     setError('')
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    })
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
 
-    if (result?.error) {
-      setError('Email ou password incorretos')
+      if (result?.error) {
+        setError('Email ou password incorretos')
+      } else {
+        router.push('/admin')
+      }
+    } catch (err) {
+      setError('Erro ao fazer login')
+    } finally {
       setLoading(false)
-    } else {
-      router.push('/admin')
     }
   }
 
