@@ -6,11 +6,11 @@ import bcrypt from 'bcryptjs'
 // Call this once after deployment: https://yoursite.com/api/setup
 
 export async function GET(request: NextRequest) {
-  // Verify secret to prevent unauthorized setup
-  const secret = request.nextUrl.searchParams.get('secret')
-  if (secret !== process.env.NEXTAUTH_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  // Skip secret check for now - anyone can setup
+  // const secret = request.nextUrl.searchParams.get('secret')
+  // if (secret !== process.env.NEXTAUTH_SECRET) {
+  //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // }
 
   try {
     // Create tables
