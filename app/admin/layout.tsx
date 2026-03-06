@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { Home, Building, FileText, Users, LogOut } from 'lucide-react'
+import { Home, Building, FileText, Users } from 'lucide-react'
 
-export default async function AdminLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode
@@ -48,14 +48,7 @@ export default async function AdminLayout({
 
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-700">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-300">{session.user?.email}</span>
-            <Link 
-              href="/api/auth/signout" 
-              className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300"
-            >
-              <LogOut size={16} />
-              Sair
-            </Link>
+            <span className="text-sm text-gray-300">Admin</span>
           </div>
           <Link 
             href="/" 
