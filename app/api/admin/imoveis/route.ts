@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         lng: body.lng || null,
         energyClass: body.energyClass || null,
         features: JSON.stringify(body.features || []),
-        images: body.images ? JSON.stringify(body.images.split(',').map((img: string) => img.trim())) : '[]',
+        images: body.images && body.images.length > 0 ? JSON.stringify(body.images.split(',').map((img: string) => img.trim()).filter(Boolean)) : '[]',
         featured: body.featured || false,
       }
     })
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(listing)
   } catch (error) {
     console.error('Error creating listing:', error)
-    return NextResponse.json({ error: 'Error creating listing' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: 'Error creating listing: ' + message }, { status: 500 })
   }
 }
