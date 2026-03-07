@@ -2,14 +2,34 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Bed, Bath, Maximize, MapPin } from 'lucide-react'
+import { Bed, Bath, Maximize, MapPin, Search, X } from 'lucide-react'
 
 export default function ImoveisPage() {
   const [listings, setListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showFilters, setShowFilters] = useState(false)
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    type: '',
+    priceType: '',
+    district: '',
+    minPrice: '',
+    maxPrice: '',
+    bedrooms: '',
+  })
 
-  useEffect(() => {
-    fetch('/api/imoveis')
+  const fetchListings = () => {
+    setLoading(true)
+    const params = new URLSearchParams()
+    if (filters.type) params.set('type', filters.type)
+    if (filters.priceType) params.set('priceType', filters.priceType)
+    if (filters.district) params.set('district', filters.district)
+    if (filters.minPrice) params.set('minPrice', filters.minPrice)
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice)
+    if (filters.bedrooms) params.set('bedrooms', filters.bedrooms)
+
+    fetch(`/api/imoveis?${params.toString()}`)
       .then(res => res.json())
       .then(data => {
         setListings(Array.isArray(data) ? data : [])
@@ -18,20 +38,35 @@ export default function ImoveisPage() {
       .catch(() => {
         setLoading(false)
       })
+  }
+
+  useEffect(() => {
+    fetchListings()
   }, [])
 
-  if (loading) {
-    return (
-      <div className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#DC1010] mx-auto"></div>
-            <p className="mt-4 text-gray-500">A carregar imóveis...</p>
-          </div>
-        </div>
-      </div>
-    )
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
   }
+
+  const applyFilters = () => {
+    fetchListings()
+    setShowFilters(false)
+  }
+
+  const clearFilters = () => {
+    setFilters({
+      type: '',
+      priceType: '',
+      district: '',
+      minPrice: '',
+      maxPrice: '',
+      bedrooms: '',
+    })
+    fetchListings()
+    setShowFilters(false)
+  }
+
+  const activeFiltersCount = Object.values(filters).filter(v => v !== '').length
 
   return (
     <div className="py-12">
@@ -39,22 +74,202 @@ export default function ImoveisPage() {
         <h1 className="text-4xl font-bold mb-8 text-[#0A2240]">
           Os Nossos Imóveis
         </h1>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {listings.map((listing: any) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
+
+        {/* Filter Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 bg-[#0A2240] text-white px-4 py-2 rounded-lg hover:bg-[#1a3a5c] transition"
+          >
+            <Search size={20} />
+            <span>Filtros</span>
+            {activeFiltersCount > 0 && (
+              <span className="bg-[#DC1010] text-white text-xs px-2 py-0.5 rounded-full">
+                {activeFiltersCount}
+              </span>
+            )}
+          </button>
         </div>
 
-        {listings.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              Não existem imóveis disponíveis de momento.
-            </p>
-            <p className="text-gray-400 mt-2">
-              Em breve teremos novas opções para si.
-            </p>
+        {/* Filter Panel */}
+        {showFilters && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#0A2240]">Filtros</h3>
+              <button onClick={() => setShowFilters(false)} className="text-gray-500 hover:text-gray-700">
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Transaction Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tipo de Transação
+                </label>
+                <select
+                  value={filters.priceType}
+                  onChange={(e) => handleFilterChange('priceType', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
+                >
+                  <option value="">Todas</option>
+                  <option value="sale">Venda</option>
+                  <option value="rent">Arrendamento</option>
+                </select>
+              </div>
+
+              {/* Property Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tipo de Imóvel
+                </label>
+                <select
+                  value={filters.type}
+                  onChange={(e) => handleFilterChange('type', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
+                >
+                  <option value="">Todos</option>
+                  <option value="T1">T1</option>
+                  <option value="T2">T2</option>
+                  <option value="T3">T3</option>
+                  <option value="T4">T4</option>
+                  <option value="T5">T5</option>
+                  <option value="Moradia">Moradia</option>
+                  <option value="Loja">Loja</option>
+                  <option value="Escritório">Escritório</option>
+                  <option value="Terreno">Terreno</option>
+                </select>
+              </div>
+
+              {/* District */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Distrito
+                </label>
+                <select
+                  value={filters.district}
+                  onChange={(e) => handleFilterChange('district', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
+                >
+                  <option value="">Todos</option>
+                  <option value="Lisboa">Lisboa</option>
+                  <option value="Setúbal">Setúbal</option>
+                  <option value="Porto">Porto</option>
+                  <option value="Faro">Faro</option>
+                  <option value="Coimbra">Coimbra</option>
+                </select>
+              </div>
+
+              {/* Min Price */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Preço Mínimo
+                </label>
+                <select
+                  value={filters.minPrice}
+                  onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
+                >
+                  <option value="">Qualquer</option>
+                  <option value="50000">50.000€</option>
+                  <option value="100000">100.000€</option>
+                  <option value="150000">150.000€</option>
+                  <option value="200000">200.000€</option>
+                  <option value="300000">300.000€</option>
+                  <option value="500000">500.000€</option>
+                </select>
+              </div>
+
+              {/* Max Price */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Preço Máximo
+                </label>
+                <select
+                  value={filters.maxPrice}
+                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
+                >
+                  <option value="">Qualquer</option>
+                  <option value="100000">100.000€</option>
+                  <option value="150000">150.000€</option>
+                  <option value="200000">200.000€</option>
+                  <option value="300000">300.000€</option>
+                  <option value="500000">500.000€</option>
+                  <option value="1000000">1.000.000€</option>
+                </select>
+              </div>
+
+              {/* Bedrooms */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Quartos
+                </label>
+                <select
+                  value={filters.bedrooms}
+                  onChange={(e) => handleFilterChange('bedrooms', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC1010] focus:border-transparent"
+                >
+                  <option value="">Qualquer</option>
+                  <option value="1">1 Quarto</option>
+                  <option value="2">2 Quartos</option>
+                  <option value="3">3 Quartos</option>
+                  <option value="4">4 Quartos</option>
+                  <option value="5">5+ Quartos</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={applyFilters}
+                className="bg-[#DC1010] text-white px-6 py-2 rounded-lg hover:bg-[#b00d0d] transition"
+              >
+                Aplicar Filtros
+              </button>
+              <button
+                onClick={clearFilters}
+                className="text-gray-600 hover:text-gray-800 px-4 py-2"
+              >
+                Limpar Filtros
+              </button>
+            </div>
           </div>
+        )}
+
+        {/* Results count */}
+        <p className="text-gray-500 mb-4">
+          {loading ? 'A carregar...' : `${listings.length} imóvel(is) encontrado(s)`}
+        </p>
+
+        {/* Listings Grid */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#DC1010] mx-auto"></div>
+            <p className="mt-4 text-gray-500">A carregar imóveis...</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {listings.map((listing: any) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+
+            {listings.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">
+                  Não existem imóveis com os filtros selecionados.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-4 text-[#DC1010] hover:underline"
+                >
+                  Limpar filtros
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
