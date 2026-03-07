@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { Plus, Edit, FileText } from 'lucide-react'
-
-const prisma = new PrismaClient()
 
 export default async function AdminBlogPage() {
   const posts = await prisma.blogPost.findMany({
@@ -46,7 +44,7 @@ export default async function AdminBlogPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {posts.map((post: { id: string; title: string; slug: string; excerpt: string; published: boolean; createdAt: Date }) => (
+                {posts.map((post) => (
                   <tr key={post.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">{post.title}</div>

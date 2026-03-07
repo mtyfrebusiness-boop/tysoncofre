@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY || '')
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,6 +28,35 @@ export async function POST(req: NextRequest) {
         listingId: listingId || null,
       },
     })
+
+    // Send email notification to admin
+    const adminEmail = process.env.ADMIN_EMAIL || 'tysoncofre@remax.pt'
+    
+    if (process.env.RESEND_API_KEY) {
+      try {
+        await resend.emails.send({
+          from: 'Tyson Cofre RE/MAX <onboarding@resend.dev>',
+          to: adminEmail,
+          subject: `🔔 Novo Lead: ${name}`,
+          html: `
+            <h2>Novo Contacto Recebido</h2>
+            <p><strong>Nome:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Telefone:</strong> ${phone || 'Não fornecido'}</p>
+            <p><strong>Mensagem:</strong></p>
+            <p>${message}</p>
+            <p><strong>Fonte:</strong> ${source || 'homepage'}</p>
+            <hr>
+            <p style="color: #666; font-size: 12px;">
+              Recebido em: ${new Date().toLocaleString('pt-PT')}
+            </p>
+          `
+        })
+      } catch (emailError) {
+        console.error('Error sending email:', emailError)
+        // Continue even if email fails - lead is saved
+      }
+    }
 
     return NextResponse.json({ success: true, leadId: lead.id })
   } catch (error) {

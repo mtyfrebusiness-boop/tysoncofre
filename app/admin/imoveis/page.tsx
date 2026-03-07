@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/db'
 import Link from 'next/link'
-import { Plus, Edit, Trash2, Star } from 'lucide-react'
-
-const prisma = new PrismaClient()
+import { Plus, Edit, Star } from 'lucide-react'
 
 export default async function AdminImoveisPage() {
   const listings = await prisma.listing.findMany({
@@ -68,7 +66,7 @@ export default async function AdminImoveisPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {listings.map((listing: { id: string; title: string; slug: string; location: string; price: number; priceType: string; type: string; status: string; featured: boolean }) => (
+                {listings.map((listing) => (
                   <tr key={listing.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">{listing.title}</div>

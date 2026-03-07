@@ -1,14 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import ImageUpload from '@/components/ImageUpload'
 
-export default function NovoBlogPostPage() {
+export default function EditBlogPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const params = useParams()
+  const id = params?.id as string
+  
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-
   const [formData, setFormData] = useState({
     title: '',
     titleEn: '',
@@ -21,43 +24,66 @@ export default function NovoBlogPostPage() {
     published: false,
   })
 
+  useEffect(() => {
+    if (!id) return
+    
+    fetch(`/api/admin/blog`)
+      .then(res => res.json())
+      .then(data => {
+        const post = data.find((p: any) => p.id === id)
+        if (post) {
+          setFormData({
+            title: post.title || '',
+            titleEn: post.titleEn || '',
+            titleEs: post.titleEs || '',
+            content: post.content || '',
+            contentEn: post.contentEn || '',
+            contentEs: post.contentEs || '',
+            excerpt: post.excerpt || '',
+            coverImage: post.coverImage || '',
+            published: post.published || false,
+          })
+        }
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching post:', err)
+        setLoading(false)
+      })
+  }, [id])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setSaving(true)
     setError('')
 
     try {
-      // Generate slug from title
-      const slug = formData.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-
-      const response = await fetch('/api/admin/blog', {
-        method: 'POST',
+      const response = await fetch(`/api/admin/blog?id=${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          slug,
-        }),
+        body: JSON.stringify(formData),
       })
 
       if (response.ok) {
         router.push('/admin/blog')
       } else {
-        setError('Erro ao criar post')
+        setError('Erro ao atualizar post')
       }
     } catch (err) {
-      setError('Erro ao criar post')
+      setError('Erro ao atualizar post')
     } finally {
-      setLoading(false)
+      setSaving(false)
     }
+  }
+
+  if (loading) {
+    return <div className="p-8 text-center">A carregar...</div>
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-[#0A2240]">Novo Post</h1>
+        <h1 className="text-3xl font-bold text-[#0A2240]">Editar Post</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 space-y-6">
@@ -199,10 +225,10 @@ export default function NovoBlogPostPage() {
         <div className="flex items-center gap-4">
           <button
             type="submit"
-            disabled={loading}
+            disabled={saving}
             className="bg-[#DC1010] text-white px-6 py-2 rounded-lg hover:bg-[#b00d0d] transition-colors disabled:opacity-50"
           >
-            {loading ? 'A guardar...' : 'Guardar Post'}
+            {saving ? 'A guardar...' : 'Guardar Alterações'}
           </button>
           <button
             type="button"
