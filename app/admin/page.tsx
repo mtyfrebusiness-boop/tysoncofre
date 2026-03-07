@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client'
 import Link from 'next/link'
 import { Building, FileText, Users, Plus, ArrowRight } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 const prisma = new PrismaClient()
 
 export default async function AdminDashboard() {

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { Plus, Edit, FileText } from 'lucide-react'
 import DeleteButton from '@/components/DeleteButton'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminBlogPage() {
   const posts = await prisma.blogPost.findMany({
     orderBy: { createdAt: 'desc' }

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { Plus, Edit, Star } from 'lucide-react'
 import DeleteButton from '@/components/DeleteButton'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminImoveisPage() {
   const listings = await prisma.listing.findMany({
     orderBy: { createdAt: 'desc' }
