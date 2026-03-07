@@ -10,7 +10,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/imoveis?featured=true')
+    fetch('/api/imoveis')
       .then(res => res.json())
       .then(data => {
         setFeaturedListings(Array.isArray(data) ? data.slice(0, 4) : [])

@@ -17,6 +17,8 @@ export async function GET(request: Request) {
     // Filter by featured
     if (featured === 'true') {
       where.featured = true
+    } else if (featured === 'false' || featured === null) {
+      // If not filtering by featured, show all (including non-featured)
     }
 
     // Filter by price type (sale or rent)
