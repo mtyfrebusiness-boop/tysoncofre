@@ -53,15 +53,17 @@ model BlogPost {
 }
 
 model Lead {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  phone     String?
-  message   String
-  source    String?
-  listingId String?
-  createdAt DateTime @default(now())
-  read      Boolean  @default(false)
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String
+  source      String?
+  listingId   String?
+  listingTitle String?
+  status      String   @default("new") // new, contacted, visiting, closed
+  createdAt   DateTime @default(now())
+  read        Boolean  @default(false)
 }
 
 model User {
