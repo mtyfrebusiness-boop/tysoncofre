@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Trash2, Mail, Phone, MessageSquare } from 'lucide-react'
+import { Trash2, Mail, Phone, MessageSquare, Home, ExternalLink } from 'lucide-react'
 
 export default function AdminLeadsPage() {
   const [leads, setLeads] = useState<any[]>([])
@@ -79,6 +79,11 @@ export default function AdminLeadsPage() {
                       <div>
                         <p className="font-medium text-gray-900">{lead.name}</p>
                         <p className="text-sm text-gray-500">{lead.email}</p>
+                        {lead.listingTitle && (
+                          <p className="text-xs text-[#DC1010] mt-1">
+                            📍 {lead.listingTitle}
+                          </p>
+                        )}
                       </div>
                       <div className="text-xs text-gray-400">
                         {new Date(lead.createdAt).toLocaleDateString('pt-PT')}
@@ -122,6 +127,20 @@ export default function AdminLeadsPage() {
                         <Phone className="text-gray-400" size={20} />
                         <a href={`tel:${selectedLead.phone}`} className="text-[#0A2240] hover:underline">
                           {selectedLead.phone}
+                        </a>
+                      </div>
+                    )}
+
+                    {selectedLead.listingTitle && (
+                      <div className="flex items-center gap-3">
+                        <Home className="text-gray-400" size={20} />
+                        <a 
+                          href={`/imoveis/${selectedLead.listingId}`}
+                          target="_blank"
+                          className="text-[#0A2240] font-medium hover:underline flex items-center gap-1"
+                        >
+                          {selectedLead.listingTitle}
+                          <ExternalLink size={14} />
                         </a>
                       </div>
                     )}

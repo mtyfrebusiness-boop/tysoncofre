@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { Plus, Edit, FileText } from 'lucide-react'
+import DeleteButton from '@/components/DeleteButton'
 
 export default async function AdminBlogPage() {
   const posts = await prisma.blogPost.findMany({
@@ -71,6 +72,7 @@ export default async function AdminBlogPage() {
                         >
                           <Edit size={18} />
                         </Link>
+                        <DeleteButton id={post.id} type="post" />
                         <Link 
                           href={`/blog/${post.slug}`}
                           target="_blank"

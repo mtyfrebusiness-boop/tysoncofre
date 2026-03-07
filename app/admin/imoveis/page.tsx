@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { Plus, Edit, Star } from 'lucide-react'
+import DeleteButton from '@/components/DeleteButton'
 
 export default async function AdminImoveisPage() {
   const listings = await prisma.listing.findMany({
@@ -97,6 +98,7 @@ export default async function AdminImoveisPage() {
                         >
                           <Edit size={18} />
                         </Link>
+                        <DeleteButton id={listing.id} type="listing" />
                         <Link 
                           href={`/imoveis/${listing.slug}`}
                           target="_blank"
