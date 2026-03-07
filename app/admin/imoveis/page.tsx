@@ -6,9 +6,14 @@ import DeleteButton from '@/components/DeleteButton'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminImoveisPage() {
-  const listings = await prisma.listing.findMany({
-    orderBy: { createdAt: 'desc' }
-  })
+  let listings: any[] = []
+  try {
+    listings = await prisma.listing.findMany({
+      orderBy: { createdAt: 'desc' }
+    })
+  } catch (error) {
+    console.error('Error fetching listings:', error)
+  }
 
   const formatPrice = (price: number, priceType: string) => {
     if (priceType === 'rent') {

@@ -6,9 +6,14 @@ import DeleteButton from '@/components/DeleteButton'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminBlogPage() {
-  const posts = await prisma.blogPost.findMany({
-    orderBy: { createdAt: 'desc' }
-  })
+  let posts: any[] = []
+  try {
+    posts = await prisma.blogPost.findMany({
+      orderBy: { createdAt: 'desc' }
+    })
+  } catch (error) {
+    console.error('Error fetching posts:', error)
+  }
 
   return (
     <div>

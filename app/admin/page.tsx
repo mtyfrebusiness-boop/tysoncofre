@@ -1,28 +1,37 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { Building, FileText, Users, Plus, ArrowRight } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-const prisma = new PrismaClient()
-
 export default async function AdminDashboard() {
-  // Fetch stats
-  const totalListings = await prisma.listing.count()
-  const activeListings = await prisma.listing.count({
-    where: { status: 'available' }
-  })
-  const totalLeads = await prisma.lead.count()
-  const unreadLeads = await prisma.lead.count({
-    where: { read: false }
-  })
-  const totalPosts = await prisma.blogPost.count()
+  // Fetch stats with error handling
+  let totalListings = 0
+  let activeListings = 0
+  let totalLeads = 0
+  let unreadLeads = 0
+  let totalPosts = 0
+  let recentLeads: any[] = []
 
-  // Fetch recent leads
-  const recentLeads = await prisma.lead.findMany({
-    take: 10,
-    orderBy: { createdAt: 'desc' }
-  })
+  try {
+    totalListings = await prisma.listing.count()
+    activeListings = await prisma.listing.count({
+      where: { status: 'available' }
+    })
+    totalLeads = await prisma.lead.count()
+    unreadLeads = await prisma.lead.count({
+      where: { read: false }
+    })
+    totalPosts = await prisma.blogPost.count()
+
+    // Fetch recent leads
+    recentLeads = await prisma.lead.findMany({
+      take: 10,
+      orderBy: { createdAt: 'desc' }
+    })
+  } catch (error) {
+    console.error('Error fetching admin data:', error)
+  }
 
   return (
     <div>
