@@ -51,6 +51,14 @@ export default function ListingCard({ listing }: ListingCardProps) {
           alt={listing.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
+        {/* Logo Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <img
+            src="/images/tysoncofre-logo.png"
+            alt="Tyson Cofre"
+            className="w-32 h-auto opacity-50"
+          />
+        </div>
         {/* Status Badge */}
         <div className={`absolute top-2 right-2 px-2 py-1 text-white text-xs font-medium rounded ${statusColors[listing.status as keyof typeof statusColors] || 'bg-gray-500'}`}>
           {listing.status === 'available' ? 'Disponível' : listing.status === 'sold' ? 'Vendido' : 'Reservado'}

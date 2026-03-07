@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-// GET all blog posts (admin)
-export async function GET() {
+// GET all blog posts or single post (admin)
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id')
+
+  if (id) {
+    const post = await prisma.blogPost.findUnique({
+      where: { id }
+    })
+
+    if (!post) {
+      return NextResponse.json({ error: 'Post não encontrado' }, { status: 404 })
+    }
+
+    return NextResponse.json(post)
+  }
+
   const posts = await prisma.blogPost.findMany({
     orderBy: { createdAt: 'desc' }
   })

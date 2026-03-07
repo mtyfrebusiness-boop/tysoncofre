@@ -27,11 +27,14 @@ export default function EditBlogPage() {
   useEffect(() => {
     if (!id) return
     
-    fetch(`/api/admin/blog`)
-      .then(res => res.json())
-      .then(data => {
-        const post = data.find((p: any) => p.id === id)
-        if (post) {
+    // Fetch single post data directly
+    fetch(`/api/admin/blog?id=${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch')
+        return res.json()
+      })
+      .then(post => {
+        if (post && !post.error) {
           setFormData({
             title: post.title || '',
             titleEn: post.titleEn || '',

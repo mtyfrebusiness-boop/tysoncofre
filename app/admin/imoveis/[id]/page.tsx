@@ -45,12 +45,14 @@ export default function EditImovelPage() {
   useEffect(() => {
     if (!id) return
     
-    // Fetch listing data
-    fetch(`/api/admin/imoveis`)
-      .then(res => res.json())
-      .then(data => {
-        const listing = data.find((l: any) => l.id === id)
-        if (listing) {
+    // Fetch single listing data directly
+    fetch(`/api/admin/imoveis?id=${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch')
+        return res.json()
+      })
+      .then(listing => {
+        if (listing && !listing.error) {
           let features: string[] = []
           try {
             features = JSON.parse(listing.features)

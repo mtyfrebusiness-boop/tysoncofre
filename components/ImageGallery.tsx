@@ -49,6 +49,15 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             className="w-full h-full object-cover"
           />
           
+          {/* Logo Watermark */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <img
+              src="/images/tysoncofre-logo.png"
+              alt="Tyson Cofre"
+              className="w-48 h-auto opacity-50"
+            />
+          </div>
+          
           {/* Navigation Arrows */}
           {images.length > 1 && (
             <>
@@ -125,6 +134,15 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             alt={`${title} - Imagem ${currentIndex + 1}`}
             className="max-w-full max-h-full object-contain"
           />
+
+          {/* Logo Watermark in Fullscreen */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <img
+              src="/images/tysoncofre-logo.png"
+              alt="Tyson Cofre"
+              className="w-64 h-auto opacity-50"
+            />
+          </div>
 
           <button
             onClick={goToNext}

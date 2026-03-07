@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-// GET all listings (admin)
-export async function GET() {
+// GET all listings or single listing (admin)
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id')
+
+  if (id) {
+    const listing = await prisma.listing.findUnique({
+      where: { id }
+    })
+
+    if (!listing) {
+      return NextResponse.json({ error: 'Imóvel não encontrado' }, { status: 404 })
+    }
+
+    return NextResponse.json(listing)
+  }
+
   const listings = await prisma.listing.findMany({
     orderBy: { createdAt: 'desc' }
   })
