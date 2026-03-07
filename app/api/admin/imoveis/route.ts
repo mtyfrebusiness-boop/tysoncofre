@@ -116,6 +116,15 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 })
     }
 
+    // Check if listing exists first
+    const existing = await prisma.listing.findUnique({
+      where: { id }
+    })
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Imóvel não encontrado' }, { status: 404 })
+    }
+
     await prisma.listing.delete({
       where: { id }
     })
