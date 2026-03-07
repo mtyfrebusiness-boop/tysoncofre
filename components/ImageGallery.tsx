@@ -75,7 +75,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             <img
               src="/images/tysoncofre-logo.png"
               alt="Tyson Cofre"
-              className="w-48 h-auto opacity-50"
+              className="w-24 md:w-32 lg:w-48 h-auto opacity-50"
             />
           </div>
           
@@ -164,7 +164,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             <img
               src="/images/tysoncofre-logo.png"
               alt="Tyson Cofre"
-              className="w-64 h-auto opacity-50"
+              className="w-32 md:w-48 lg:w-64 h-auto opacity-50"
             />
           </div>
 

@@ -97,7 +97,7 @@ function ListingCard({ listing }: { listing: any }) {
           <img
             src="/images/tysoncofre-logo.png"
             alt="Tyson Cofre"
-            className="w-24 sm:w-28 md:w-32 h-auto opacity-50"
+            className="w-20 sm:w-24 md:w-28 lg:w-32 h-auto opacity-50"
           />
         </div>
         {/* Status Badge */}
