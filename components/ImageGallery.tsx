@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react'
 
 interface ImageGalleryProps {
@@ -11,6 +11,7 @@ interface ImageGalleryProps {
 export default function ImageGallery({ images, title }: ImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const lastTapRef = useRef<number>(0)
 
   if (!images || images.length === 0) {
     return (
@@ -38,15 +39,35 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
     document.body.style.overflow = 'auto'
   }
 
+  // Handle double-tap to go fullscreen on mobile
+  const handleImageDoubleTap = () => {
+    const now = Date.now()
+    const DOUBLE_TAP_DELAY = 300
+    
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+      // Double tap detected - toggle fullscreen
+      if (isFullscreen) {
+        closeFullscreen()
+      } else {
+        openFullscreen()
+      }
+    }
+    lastTapRef.current = now
+  }
+
   return (
     <>
       {/* Main Image Gallery */}
       <div className="mb-8">
-        <div className="relative h-[400px] lg:h-[500px] rounded-lg overflow-hidden group">
+        <div 
+          className="relative h-[400px] lg:h-[500px] rounded-lg overflow-hidden group cursor-pointer"
+          onClick={handleImageDoubleTap}
+          onTouchEnd={handleImageDoubleTap}
+        >
           <img
             src={images[currentIndex]}
             alt={`${title} - Imagem ${currentIndex + 1}`}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover select-none"
           />
           
           {/* Logo Watermark */}
@@ -58,28 +79,31 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             />
           </div>
           
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - always visible on mobile, hover on desktop */}
           {images.length > 1 && (
             <>
               <button
-                onClick={goToPrevious}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                aria-label="Imagem anterior"
               >
                 <ChevronLeft size={24} />
               </button>
               <button
-                onClick={goToNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                aria-label="Próxima imagem"
               >
                 <ChevronRight size={24} />
               </button>
             </>
           )}
 
-          {/* Fullscreen Button */}
+          {/* Fullscreen Button - always visible on mobile, hover on desktop */}
           <button
-            onClick={openFullscreen}
-            className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={(e) => { e.stopPropagation(); openFullscreen(); }}
+            className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            aria-label="Ver em ecrã completo"
           >
             <Maximize2 size={20} />
           </button>
