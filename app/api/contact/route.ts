@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY || '')
+// Only import Resend if API key is available
+const resend = process.env.RESEND_API_KEY ? require('resend').Resend : null
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     // Send email notification to admin
     const adminEmail = process.env.ADMIN_EMAIL || 'tysoncofre@remax.pt'
     
-    if (process.env.RESEND_API_KEY) {
+    if (resend && process.env.RESEND_API_KEY) {
       try {
         await resend.emails.send({
           from: 'Tyson Cofre RE/MAX <onboarding@resend.dev>',
