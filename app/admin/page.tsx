@@ -1,36 +1,73 @@
-import { prisma } from '@/lib/db'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Building, FileText, Users, Plus, ArrowRight } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+type LeadStatus = 'new' | 'contacted' | 'visiting' | 'closed'
 
-export default async function AdminDashboard() {
-  // Fetch stats with error handling
-  let totalListings = 0
-  let activeListings = 0
-  let totalLeads = 0
-  let unreadLeads = 0
-  let totalPosts = 0
-  let recentLeads: any[] = []
+interface Stats {
+  totalListings: number
+  activeListings: number
+  totalLeads: number
+  unreadLeads: number
+  totalPosts: number
+}
 
-  try {
-    totalListings = await prisma.listing.count()
-    activeListings = await prisma.listing.count({
-      where: { status: 'available' }
-    })
-    totalLeads = await prisma.lead.count()
-    unreadLeads = await prisma.lead.count({
-      where: { read: false }
-    })
-    totalPosts = await prisma.blogPost.count()
+interface RecentLead {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  source: string | null
+  createdAt: string
+  read: boolean
+  status: string
+}
 
-    // Fetch recent leads
-    recentLeads = await prisma.lead.findMany({
-      take: 10,
-      orderBy: { createdAt: 'desc' }
-    })
-  } catch (error) {
-    console.error('Error fetching admin data:', error)
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<Stats>({
+    totalListings: 0,
+    activeListings: 0,
+    totalLeads: 0,
+    unreadLeads: 0,
+    totalPosts: 0
+  })
+  const [recentLeads, setRecentLeads] = useState<RecentLead[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/admin/imoveis').then(res => res.json()),
+      fetch('/api/admin/leads').then(res => res.json()),
+      fetch('/api/admin/blog').then(res => res.json())
+    ])
+      .then(([listings, leads, posts]) => {
+        const listingArray = Array.isArray(listings) ? listings : []
+        const leadsArray = Array.isArray(leads) ? leads : []
+        const postsArray = Array.isArray(posts) ? posts : []
+
+        setStats({
+          totalListings: listingArray.length,
+          activeListings: listingArray.filter((l: any) => l.status === 'available').length,
+          totalLeads: leadsArray.length,
+          unreadLeads: leadsArray.filter((l: any) => !l.read).length,
+          totalPosts: postsArray.length
+        })
+
+        setRecentLeads(leadsArray.slice(0, 10).map((lead: any) => ({
+          ...lead,
+          createdAt: lead.createdAt?.toString() || new Date().toISOString()
+        })))
+        setLoading(false)
+      })
+      .catch(() => {
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return <div className="p-8 text-center">A carregar...</div>
   }
 
   return (
@@ -43,7 +80,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Total Imóveis</p>
-              <p className="text-3xl font-bold text-[#0A2240]">{totalListings}</p>
+              <p className="text-3xl font-bold text-[#0A2240]">{stats.totalListings}</p>
             </div>
             <Building className="text-[#DC1010]" size={32} />
           </div>
@@ -56,7 +93,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Imóveis Ativos</p>
-              <p className="text-3xl font-bold text-green-600">{activeListings}</p>
+              <p className="text-3xl font-bold text-green-600">{stats.activeListings}</p>
             </div>
             <Building className="text-green-500" size={32} />
           </div>
@@ -66,12 +103,12 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Total Leads</p>
-              <p className="text-3xl font-bold text-[#0A2240]">{totalLeads}</p>
+              <p className="text-3xl font-bold text-[#0A2240]">{stats.totalLeads}</p>
             </div>
             <Users className="text-[#0A2240]" size={32} />
           </div>
-          {unreadLeads > 0 && (
-            <p className="text-sm text-orange-500 mt-2">{unreadLeads} não lidos</p>
+          {stats.unreadLeads > 0 && (
+            <p className="text-sm text-orange-500 mt-2">{stats.unreadLeads} não lidos</p>
           )}
         </div>
 
@@ -79,7 +116,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Posts Blog</p>
-              <p className="text-3xl font-bold text-[#C9A84C]">{totalPosts}</p>
+              <p className="text-3xl font-bold text-[#C9A84C]">{stats.totalPosts}</p>
             </div>
             <FileText className="text-[#C9A84C]" size={32} />
           </div>
@@ -141,7 +178,7 @@ export default async function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {recentLeads.map((lead: { id: string; name: string; email: string; phone: string | null; source: string | null; createdAt: Date; read: boolean }) => (
+                {recentLeads.map((lead) => (
                   <tr key={lead.id} className={lead.read ? 'bg-white' : 'bg-yellow-50'}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {lead.name}
