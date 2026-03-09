@@ -29,8 +29,24 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Tyson Cofre - Consultor Imobiliário RE/MAX",
-    description: "Consultor imobiliário RE/MAX na região de Almada e Lisboa",
+    description: "Consultor imobiliário RE/MAX na região de Almada e Lisboa. Encontre o imóvel dos seus sonhos.",
     type: "website",
+    url: "https://tysoncofre.vercel.app",
+    siteName: "Tyson Cofre Imobiliário",
+    images: [
+      {
+        url: "/images/tyson-profile.png",
+        width: 800,
+        height: 800,
+        alt: "Tyson Cofre - Consultor Imobiliário RE/MAX",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tyson Cofre - Consultor Imobiliário RE/MAX",
+    description: "Consultor imobiliário RE/MAX na região de Almada e Lisboa.",
+    images: ["/images/tyson-profile.png"],
   },
 };
 
